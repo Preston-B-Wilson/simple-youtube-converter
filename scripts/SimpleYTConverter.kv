@@ -85,15 +85,20 @@ MainScreen:
             color: 0.811, 0.811, 0.811, 1
             background_color: 0.160, 0.180, 0.537, 1
             on_press: root.update_dl_dir()
-    Label:
+    Button:
         text: root.kivy_dir_output
-        foreground_color: (0.811, 0.811, 0.811)
         color: 0.811, 0.811, 0.811, 1
+        background_color: 0.274, 0.262, 0.337, 1
         size_hint: .5, None
-        height: dp(45)
+        height: dp(60)
+        line_height: dp(1.2)
+        halign: 'center'
+        on_press: root.goto_path()
     Label:
+        id: dir_warning
         text: ""
-        color: 0.811, 0.811, 0.811, 1
+        foreground_color: (0.811, 0.811, 0.811)
+        color: .8, 0.1, 0.1, 1
         size_hint: .5, None
         height: dp(45)
     Label: 

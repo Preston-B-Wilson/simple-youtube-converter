@@ -1,18 +1,22 @@
 from kivy.app import App
-from ytconvert import test
 from kivy.uix.gridlayout import GridLayout
+from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 
 
-class WidgetsExample(GridLayout):
-    def on_button_click(self):
-        print(test())
+class MainScreen(GridLayout):
 
-class MainWidget(Widget):
+    text_input_str = StringProperty("")
+
+    def delete_queue(self):
+        self.text_input_str = ""
+
+    def add_to_queue(self):
+        self.text_input_str = self.ids.my_text_input.text
+        self.ids.my_text_input.text = ""
+
+class SimpleYTConverterApp(App):
     pass
 
-class TheLabApp(App):
-    pass
-
-TheLabApp().run()
+SimpleYTConverterApp().run()

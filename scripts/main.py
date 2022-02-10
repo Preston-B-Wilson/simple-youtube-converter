@@ -1,4 +1,7 @@
-import os
+import os, ytconvert, threading
+
+from pytube import YouTube
+
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import StringProperty
@@ -19,13 +22,13 @@ class MainScreen(GridLayout):
 
     last_text_input = ""
     all_text_input = []
-    kivy_text_output = StringProperty("")
+    kivy_url_output = StringProperty("")
 
     def delete_queue(self):
         self.ids.url_warning.text = ""
         self.last_text_input = ""
         self.all_text_input = []
-        self.kivy_text_output = ""
+        self.kivy_url_output = ""
 
     def add_to_queue(self):
         input_txt = self.ids.my_text_input
@@ -46,9 +49,11 @@ class MainScreen(GridLayout):
         reconstructed_text = ""
 
         for url in self.all_text_input:
-            reconstructed_text += url + "\n"
+            yt_obj = YouTube(url)
+            title = yt_obj.title
+            reconstructed_text += title + "\n"
 
-        self.kivy_text_output = reconstructed_text
+        self.kivy_url_output = reconstructed_text
 
     def update_dl_dir(self):
         input_dir = self.ids.my_text_input2
@@ -72,6 +77,10 @@ class MainScreen(GridLayout):
     def goto_path(self):
         print(self.dl_dir + "\\")
         os.startfile(self.dl_dir)
+
+    def run_download(self):
+        thread1 = threading.Thread(target=ytconvert.YTConvert, args=(self.all_text_input, "wav", self.dl_dir, True))
+        thread1.start()
 
 class SimpleYTConverterApp(App):
     pass

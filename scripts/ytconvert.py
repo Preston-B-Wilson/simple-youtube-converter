@@ -1,9 +1,26 @@
-import sys, os, re, asyncio, pydub
+import sys, os, re, threading, asyncio, pydub
 from pytube import YouTube
 
 class YTConvert:
 
-    def __init__(self, url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ", custom_format = "wav", custom_dir = "nope"):
+    def __init__(self, url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ", custom_format = "wav", custom_dir = "nope" , self_run = False):
+
+        if self_run == True:
+            YTConvert(url, custom_format, custom_dir, False).run()
+            sys.exit()
+
+        if isinstance (url, list):
+            self.threads = []
+
+            for x, unique in enumerate(url, start=1):
+                thread_name = f"thread{x}"
+                thread_name = threading.Thread(target = YTConvert, args = (unique, custom_format, custom_dir, True))
+                self.threads.append(thread_name)
+
+            for thread in self.threads: thread.start()
+            for thread in self.threads: thread.join()
+
+            sys.exit()
 
         self.cwd = os.getcwd()
 
@@ -31,6 +48,8 @@ class YTConvert:
         self.mp4_dl_path = self.dl_dir + "\\" + self.title_mp4
         self.new_format_path = self.dl_dir + "\\" + self.title_format
 
+        self.mp4_exist = False
+
     def title_scrubber(self, title):
 
         bad_characters = ['<', '>', ':', '"', "/" , "\\", '?', '*']
@@ -44,6 +63,9 @@ class YTConvert:
         return title
 
     async def download_stream(self):
+
+        if os.path.exists(self.mp4_dl_path):
+            self.mp4_exist = True
 
         self.stream.download(output_path=self.dl_dir, filename=self.title_mp4)
        
@@ -59,10 +81,11 @@ class YTConvert:
         asyncio.run(self.download_stream())
         if self.format != "mp4": 
             asyncio.run(self.convert_to_format())
-            os.remove(self.mp4_dl_path)
+            if not self.mp4_exist: os.remove(self.mp4_dl_path)
+        print("Successfully downloaded" + (" and converted " if self.format != "mp4" else " ")  + self.format + " of " + self.title)
 
-ytconvert = YTConvert("https://www.youtube.com/watch?v=gtpghD8nJTw", "mp4")
-ytconvert.run()
+
+
 
 
 

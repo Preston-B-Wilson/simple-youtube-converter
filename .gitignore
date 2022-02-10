@@ -1,2 +1,5 @@
 /downloads
 /scripts/__pycache__
+/scripts/build
+/scripts/dist
+/scripts/main.spec
